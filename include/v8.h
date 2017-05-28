@@ -2317,8 +2317,6 @@ class V8_EXPORT Value : public Data {
 
   Local<String> TypeOf(Isolate*);
 
-  Maybe<bool> InstanceOf(Local<Context> context, Local<Object> object);
-
  private:
   V8_INLINE bool QuickIsUndefined() const;
   V8_INLINE bool QuickIsNull() const;
@@ -2793,16 +2791,11 @@ class V8_EXPORT Symbol : public Name {
   static Local<Symbol> ForApi(Isolate *isolate, Local<String> name);
 
   // Well-known symbols
-  static Local<Symbol> GetHasInstance(Isolate* isolate);
-  static Local<Symbol> GetIsConcatSpreadable(Isolate* isolate);
   static Local<Symbol> GetIterator(Isolate* isolate);
-  static Local<Symbol> GetMatch(Isolate* isolate);
-  static Local<Symbol> GetReplace(Isolate* isolate);
-  static Local<Symbol> GetSearch(Isolate* isolate);
-  static Local<Symbol> GetSplit(Isolate* isolate);
+  static Local<Symbol> GetUnscopables(Isolate* isolate);
   static Local<Symbol> GetToPrimitive(Isolate* isolate);
   static Local<Symbol> GetToStringTag(Isolate* isolate);
-  static Local<Symbol> GetUnscopables(Isolate* isolate);
+  static Local<Symbol> GetIsConcatSpreadable(Isolate* isolate);
 
   V8_INLINE static Symbol* Cast(Value* obj);
 
@@ -8357,14 +8350,16 @@ class V8_EXPORT Context {
   Isolate* GetIsolate();
 
   /**
-   * The field at kDebugIdIndex used to be reserved for the inspector.
-   * It now serves no purpose.
+   * The field at kDebugIdIndex is reserved for V8 debugger implementation.
+   * The value is propagated to the scripts compiled in given Context and
+   * can be used for filtering scripts.
    */
   enum EmbedderDataFields { kDebugIdIndex = 0 };
 
   /**
    * Gets the embedder data with the given index, which must have been set by a
-   * previous call to SetEmbedderData with the same index.
+   * previous call to SetEmbedderData with the same index. Note that index 0
+   * currently has a special meaning for Chrome's debugger.
    */
   V8_INLINE Local<Value> GetEmbedderData(int index);
 
